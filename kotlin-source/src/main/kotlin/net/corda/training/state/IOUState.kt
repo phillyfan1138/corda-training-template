@@ -12,7 +12,11 @@ import java.util.*
  *
  * Remove the "val data: String = "data" property before starting the [IOUState] tasks.
  */
-data class IOUState(val amount: Amount<Currency>, val lender: Party, val borrower: Party, val paid: Amount<Currency> = Amount(0, amount.token), override val linearId: UniqueIdentifier = UniqueIdentifier() ): LinearState {
+data class IOUState(
+        val amount: Amount<Currency>, val lender: Party, val borrower: Party,
+        val paid: Amount<Currency> = Amount(0, amount.token),
+        override val linearId: UniqueIdentifier = UniqueIdentifier()
+): LinearState {
     override val participants: List<Party> get() = listOf(lender, borrower)
     fun pay(amount: Amount<Currency>):IOUState{
         return this.copy(paid=amount+this.paid)
