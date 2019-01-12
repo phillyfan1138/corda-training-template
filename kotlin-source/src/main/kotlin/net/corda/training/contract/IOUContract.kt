@@ -36,9 +36,15 @@ class IOUContract : Contract {
         // requireThat {
         //     ...
         // }
+
         requireThat {
             "No inputs should be consumed when issuing an IOU." using tx.inputStates.isEmpty()
             "Only one output state should be created when issuing an IOU." using (tx.outputStates.size<=1)
+            val state = tx.outputStates.single() as IOUState
+            "A newly issued IOU must have a positive amount." using (state.amount.quantity>0)
+            "The lender and borrower cannot have the same identity." using (state.borrower!=state.lender)
+            val signers=tx.commands.requireSingleCommand<Commands.Issue>()
+            "Both lender and borrower together only may sign IOU issue transaction." using (signers.signers.toSet()==state.participants.map({participant->participant.owningKey}).toSet())
         }
     }
 }
